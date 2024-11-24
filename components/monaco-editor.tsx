@@ -1,6 +1,7 @@
 'use client'
 
 import { Editor } from '@monaco-editor/react'
+import * as monaco from 'monaco-editor'
 import { useRef } from 'react'
 import { MonacoBinding } from 'y-monaco'
 import { WebsocketProvider } from 'y-websocket'
@@ -17,15 +18,14 @@ export default function MonacoWithWebsocket({
   defaultValue = '',
   language = 'javascript'
 }: MonacoWithWebsocketProps) {
-  const editorRef = useRef(null)
+  const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null)
 
   // Editor value -> YJS Text value (A text value shared by multiple people)
   // One person deletes text -> Deletes from the overall shared text value
   // Handled by YJS
 
   // Initialize YJS, tell it to listen to our Monaco instance for changes.
-
-  function handleEditorDidMount(editor: any, monaco: any) {
+  function handleEditorDidMount(editor: monaco.editor.IStandaloneCodeEditor) {
     editorRef.current = editor;
     // Initialize YJS
     const doc = new Y.Doc(); // a collection of shared objects -> Text
@@ -40,7 +40,7 @@ export default function MonacoWithWebsocket({
     const awareness = provider.awareness;
     // @ts-expect-error MonacoBinding is not a constructor
     const binding = new MonacoBinding(type, editorRef.current!.getModel(), new Set([editorRef.current!]), awareness);
-    console.log(provider.awareness);                
+    binding._beforeTransaction = () => { }              
   
     awareness.on("update", () => {
       console.log("Awareness updated  ", awareness.getStates());
