@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import '../create/createProject.css'
+import { SquareCheckBig } from 'lucide-react'
 
 interface Article {
     title: string;
@@ -19,11 +20,13 @@ interface Article {
 
 export default function CreateProject(){
     const [currentStep, setCurrentStep] = useState(1);
-    const [subject, setSubject] = useState('')
-    const [enhancedQueries, setEnhancedQueries] = useState([])
-    const [selectedQueries, setSelectedQueries] = useState<string[]>([])
+    const [nextStep, setNextStep] = useState(2);
+    const [subject, setSubject] = useState('');
+    const [enhancedQueries, setEnhancedQueries] = useState([]);
+    const [selectedQueries, setSelectedQueries] = useState<string[]>([]);
     const [articles, setArticles] = useState<Article[]>([]);
     const [expandedAbstracts, setExpandedAbstracts] = useState<{ [key: number]: boolean }>({});
+    const [selectedArticles, setSelectedArticles] = useState<Article[]>([]);
 
     const handleChangeStep = (step: number) =>{
         setCurrentStep(step)
@@ -46,15 +49,21 @@ export default function CreateProject(){
             const data = await response.json();
             console.log('data: ', data);
             setEnhancedQueries(data.data.enhanced_queries);
-            
+            setNextStep(3)
 
         } catch (error) {
             console.error(error)
         }
     }
 
-    const handleAddQuery = (query:string) => {
-        setSelectedQueries([...selectedQueries, query])
+    const handleToggleAddQuery = (query:string) => {
+        if (selectedQueries.indexOf(query,0) > -1 ){
+            selectedQueries.splice(selectedQueries.indexOf(query), 1);
+            setSelectedQueries([...selectedQueries])
+        }
+        else{
+            setSelectedQueries([...selectedQueries, query])
+        }
     }
 
     const handleLookForPapers = async () =>{
@@ -74,6 +83,7 @@ export default function CreateProject(){
             const data = await response.json();
             console.log('data: ', data);
             setArticles(data.data)
+            setNextStep(0)
         } catch (error) {
             console.error('error: ', error)
         }
@@ -86,19 +96,29 @@ export default function CreateProject(){
         }));
     };
 
+    const handleToggleAddSelectedArticle = (index:number) => {
+        if(selectedArticles.includes(articles[index])){
+            selectedArticles.splice(selectedArticles.indexOf(articles[index]), 1);
+            setSelectedArticles([...selectedArticles])
+        }
+        else{
+            setSelectedArticles([...selectedArticles, articles[index]])
+        }
+        console.log('selectedArticles: ', selectedArticles)
+    }
 
     return(<div className='steps-container'>
        <div className='steps-count'>
         <div className="step"> 
-            <span  className={currentStep === 1 ? 'active' : ''}>1</span>
+            <span  className={currentStep === 1 ? 'active' : 'completed'}>1</span>
             <p>Step 1</p>
         </div>
-        <div className={`to-step ${currentStep === 1 ? 'active': 'completed'}`}></div>
+        <div className={`to-step ${currentStep === 1 && nextStep === 2? 'active': 'completed'}`}></div>
         <div className="step">
-            <span className={currentStep === 2 ? 'active' : ''}>2</span>
+            <span className={currentStep === 2 ? 'active' : currentStep === 3 ? 'completed' : ''}>2</span>
             <p>Step 2</p>
         </div>
-        <div className={`to-step ${currentStep === 2 ? 'active': currentStep === 3 ? 'completed' : ''}`}></div>
+        <div className={`to-step ${currentStep === 2  && nextStep === 3? 'active': currentStep === 3 ? 'completed' : ''}`}></div>
         <div className="step">
             <span className={currentStep === 3 ? 'active' : ''}>3</span>
             <p>Step 3</p>
@@ -106,7 +126,7 @@ export default function CreateProject(){
        </div>
        <div className='step-content'>
             {currentStep === 1 && <>
-            <div>¿Sobre qué quieres investigar hoy?</div>
+            <div className='step-title'>¿Sobre qué quieres investigar hoy?</div>
             <Input 
               placeholder='e.g: quantum computing applications in cryptography' 
               onChange = {(e) => setSubject(e.target.value)}/> 
@@ -115,12 +135,12 @@ export default function CreateProject(){
             </div>
             </>}
             {currentStep === 2 && <>
-            <div>¿En qué temas quieres profundizar?</div> 
+            <div className='step-title'>¿En qué temas quieres profundizar?</div> 
                 {enhancedQueries.length>1 ? (
                     <>
-                    <ul>
+                    <ul className='enhanced-queries-list'>
                         {enhancedQueries.map((query: string, index: number) => (
-                            <li key={index}><a href="#" onClick={() => handleAddQuery(query)}>{query}</a></li>
+                            <li className={`enhanced-queries-item ${selectedQueries.indexOf(query) != -1 ? 'selected' : ''}`} key={index}><a href="#" onClick={() => handleToggleAddQuery(query)}>{query}</a>{ selectedQueries.indexOf(query) != -1 && <SquareCheckBig size={16} strokeWidth={3} color='white'/> }</li>
                         ))}
                     </ul>
                     <Button onClick={() => handleLookForPapers()}> Buscar Papers </Button>
@@ -131,12 +151,18 @@ export default function CreateProject(){
             </>}
             {currentStep === 3 && 
             <>
-                    <h2>Artículos relacionados</h2>
+                    <div className='step-title'>Artículos relacionados</div>
                     {articles.length ? (
                         <ul className="article-list">
                             {articles.map((article, index) => (
                                 <li key={index} className="article-item">
+                                    <div className='article-header'>
                                     <h3>{article.title}</h3>
+                                    <div>
+                                    <label htmlFor=""></label>
+                                    <input id='article' type="checkbox" placeholder='Agregar artículo' onClick={() => handleToggleAddSelectedArticle(index)}></input>
+                                    </div>
+                                    </div>
                                     <p><strong>Autores:</strong> {article.authors.join(', ')}</p>
                                     <p><strong>Publicado:</strong> {article.published}</p>
                                     <p><strong>Categoría:</strong> {article.categories}</p>
@@ -148,19 +174,19 @@ export default function CreateProject(){
                                             {expandedAbstracts[index] ? 'Leer menos' : 'Leer más'}
                                         </button>
                                     </p>
-                                    <a
-                                        href={article.pdf_url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="article-link"
-                                    >
-                                        Leer PDF
-                                    </a>
+                                        <a
+                                            href={article.pdf_url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="article-link"
+                                        >
+                                            Leer PDF
+                                        </a>
                                 </li>
                             ))}
                         </ul>
                     ) : (
-                        <p>Cargando artículos.</p>
+                        <p >Cargando artículos...</p>
                     )}
             </>}
        </div>
