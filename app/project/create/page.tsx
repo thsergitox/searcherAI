@@ -4,7 +4,6 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import MathJax from 'react-mathjax';
 import '../create/createProject.css'
 
 interface Article {
@@ -131,7 +130,7 @@ export default function CreateProject(){
                 )}
             </>}
             {currentStep === 3 && 
-            <><MathJax.Provider>
+            <>
                     <h2>Artículos relacionados</h2>
                     {articles.length ? (
                         <ul className="article-list">
@@ -141,14 +140,14 @@ export default function CreateProject(){
                                     <p><strong>Autores:</strong> {article.authors.join(', ')}</p>
                                     <p><strong>Publicado:</strong> {article.published}</p>
                                     <p><strong>Categoría:</strong> {article.categories}</p>
-                                    <MathJax.Node>
+                                    <p>
                                         {expandedAbstracts[index]
                                             ? article.abstract 
                                             : `${article.abstract.slice(0, 200)}...`} 
                                         <button onClick={() => handleToggleAbstract(index)}>
                                             {expandedAbstracts[index] ? 'Leer menos' : 'Leer más'}
                                         </button>
-                                    </MathJax.Node>
+                                    </p>
                                     <a
                                         href={article.pdf_url}
                                         target="_blank"
@@ -163,7 +162,6 @@ export default function CreateProject(){
                     ) : (
                         <p>Cargando artículos.</p>
                     )}
-            </MathJax.Provider>
             </>}
        </div>
     </div>)
