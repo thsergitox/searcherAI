@@ -24,9 +24,9 @@ export default function DocumentPage({ params }: DocumentPageProps) {
         </DraggablePanel>
         
         <div className="flex-1">
-        <QueryClientProvider client={queryClient}>
-
-          <MonacoWithWebsocket documentId={params.id} />
+          <QueryClientProvider client={queryClient}>
+            <MonacoWithWebsocket documentId={params.id} />
+          </QueryClientProvider>
         </div>
         <DraggablePanel>
         <div className="w-80 border-l p-4">
