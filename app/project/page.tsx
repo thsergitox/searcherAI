@@ -11,9 +11,7 @@ export default function NewDocument() {
   const [title, setTitle] = useState('')
 
   const handleCreate = () => {
-    const id = crypto.randomUUID()
-    // Here you would typically save the document to your backend
-    router.push(`/project/${id}`)
+    router.push(`/project/create`)
   }
 
   return (
