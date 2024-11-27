@@ -71,7 +71,7 @@ export default function CreateProject(){
     const handleLookForPapers = async () =>{
         try {
             setCurrentStep(3)
-            const response = await fetch(`${process.env.NEXT_PUBLIC_AGENTS_URL}p/api/v1/agent/run-search`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_AGENTS_URL}/api/v1/agent/run-search`, {
                 method: 'POST',
                 headers: {'Content-Type' : 'application/json'},
                 body: JSON.stringify({max_results: 3, queries: selectedQueries, sort_by: "Relevance"})
