@@ -111,7 +111,7 @@ export default function CreateProject(){
 
     const CreateProject = async () =>{
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/projects`,{
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/projects/`,{
                 method: 'POST',
                 headers: {'Content-Type' : 'application/json'},
                 body: JSON.stringify({access_token: getCookie('token'),  description: '', is_public: true, papers: selectedArticles, title:subject})
