@@ -337,17 +337,19 @@ export default function MonacoWithWebsocket({
 
   
   return (
-    <Editor
-      height="90vh"
-      defaultLanguage={language}
-      defaultValue={defaultValue}
-      theme="vs-dark"
-      beforeMount={(monaco) => {
-        // @ts-expect-error MonacoBinding is not a constructor
-        setupLanguage(monaco)
-      }}
-      onMount={handleEditorDidMount}
-      options={{
+    <div className="flex">
+      <div className="w-1/2">
+      <Editor
+        height="90vh"
+        defaultLanguage={language}
+        defaultValue={defaultValue}
+        theme="vs-light"
+        onChange={(value) => setEditorText(value || '')}
+        beforeMount={(monaco) => {
+        setupLanguage(monaco as typeof import('monaco-editor-core'))
+        }}
+        onMount={handleEditorDidMount}
+        options={{
         minimap: { enabled: false },
         wordWrap: 'on'  // Added for better LaTeX editing
       }}
