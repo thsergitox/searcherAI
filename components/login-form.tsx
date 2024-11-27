@@ -4,9 +4,11 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useState } from "react";
 
-
+interface LoginFormProps{
+    onCreateProject: ()=>void
+}
   
-export default function LoginForm() {
+export default function LoginForm({onCreateProject}: LoginFormProps) {
     const [showPassword, setShowPassword] = useState(false);
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
@@ -28,6 +30,7 @@ export default function LoginForm() {
             const token = await response.json();
             console.log(token)
             document.cookie = `token = ${token.access_token}; path=/`;
+            onCreateProject()
         } catch (error) {
             console.error(error)
         }
