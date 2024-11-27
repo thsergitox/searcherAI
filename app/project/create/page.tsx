@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import '../create/createProject.css'
-import { SquareCheckBig } from 'lucide-react'
+import { CircleCheck, SquareCheckBig } from 'lucide-react'
 
 interface Article {
     title: string;
@@ -97,7 +97,7 @@ export default function CreateProject(){
     };
 
     const handleToggleAddSelectedArticle = (index:number) => {
-        if(selectedArticles.includes(articles[index])){
+        if(selectedArticles.indexOf(articles[index], 0) > -1){
             selectedArticles.splice(selectedArticles.indexOf(articles[index]), 1);
             setSelectedArticles([...selectedArticles])
         }
@@ -131,7 +131,7 @@ export default function CreateProject(){
               placeholder='e.g: quantum computing applications in cryptography' 
               onChange = {(e) => setSubject(e.target.value)}/> 
             <div>
-                <Button onClick={() => handleSearch(2)}>Buscar</Button>
+                <Button variant={'important'} onClick={() => handleSearch(2)}>Buscar</Button>
             </div>
             </>}
             {currentStep === 2 && <>
@@ -143,7 +143,7 @@ export default function CreateProject(){
                             <li className={`enhanced-queries-item ${selectedQueries.indexOf(query) != -1 ? 'selected' : ''}`} key={index}><a href="#" onClick={() => handleToggleAddQuery(query)}>{query}</a>{ selectedQueries.indexOf(query) != -1 && <SquareCheckBig size={16} strokeWidth={3} color='white'/> }</li>
                         ))}
                     </ul>
-                    <Button onClick={() => handleLookForPapers()}> Buscar Papers </Button>
+                    <Button variant={'important'} onClick={() => handleLookForPapers()}> Buscar Papers </Button>
                     </>
                 ) : (
                     <p>Cargando resultados...</p>
@@ -158,30 +158,28 @@ export default function CreateProject(){
                                 <li key={index} className="article-item">
                                     <div className='article-header'>
                                     <h3>{article.title}</h3>
-                                    <div>
-                                    <label htmlFor=""></label>
-                                    <input id='article' type="checkbox" placeholder='Agregar artículo' onClick={() => handleToggleAddSelectedArticle(index)}></input>
-                                    </div>
                                     </div>
                                     <p><strong>Autores:</strong> {article.authors.join(', ')}</p>
                                     <p><strong>Publicado:</strong> {article.published}</p>
                                     <p><strong>Categoría:</strong> {article.categories}</p>
                                     <p>
                                         {expandedAbstracts[index]
-                                            ? article.abstract 
-                                            : `${article.abstract.slice(0, 200)}...`} 
+                                            ? article.abstract + " "
+                                            : `${article.abstract.slice(0, 200)}... `} 
                                         <button onClick={() => handleToggleAbstract(index)}>
                                             {expandedAbstracts[index] ? 'Leer menos' : 'Leer más'}
                                         </button>
                                     </p>
-                                        <a
-                                            href={article.pdf_url}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="article-link"
+                                    <div className='article-buttons'>
+                                        <Button variant={'important'} onClick={() => handleToggleAddSelectedArticle(index)}> {selectedArticles.indexOf(article) > -1 ? 'Retirar de la lista' : 'Añadir artículo'}</Button>
+                                        <Button
+                                            variant={'secondary'}
+                                            onClick={() => {window.open(article.pdf_url);}}
                                         >
                                             Leer PDF
-                                        </a>
+                                        </Button>
+                                        {selectedArticles.indexOf(article) > -1 ? (<div className='article-added'><p className='added-article'>Artículo añadido a la lista</p> <CircleCheck size={12} color="#75B033" /></div>) : ''}
+                                    </div>
                                 </li>
                             ))}
                         </ul>

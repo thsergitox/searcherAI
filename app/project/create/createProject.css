@@ -41,7 +41,7 @@
 }
 .step span.active{
     color: #2d3250;
-    border: 2px solid #2d3250;
+    border: 2px solid hsl(231, 28%, 25%);
     transition: 0.3s all ease-out 0.5s;
 }
 .step span.completed{
@@ -61,7 +61,7 @@
 }
 .to-step{
     height: 2px;
-    background-color: rgb(66, 71, 105, 0.2);
+    background-color: hsla(232, 23%, 34%, 0.2);
     width: 100%;
     position:relative
 }
@@ -81,7 +81,7 @@
     top: 0px;
     height: 2px;
     width: 40%;
-    background-color: #f9b17a;
+    background-color: hsl(26, 91%, 73%);
     content:"";
     transition: 0.5s all ease-out;
     transition-delay: 0.8s;
@@ -92,7 +92,7 @@
     top: 0px;
     height: 2px;
     width: 100%;
-    background-color: #f56e0f;
+    background-color: hsl(25, 92%, 51%);
     content:"";
     transition: width 0.8s ease-out 0s, background-color 0.3s  ease-in 0.8s;
 }
@@ -169,12 +169,12 @@
 }
 
 .enhanced-queries-item.selected{
-    background-color: #424769;
+    background-color: hsl(232, 23%, 34%);
     display: flex;
     align-items: center;
     justify-content: space-between;
     color: #fff;
-    border-bottom: 2px solid #fff;
+    border-bottom: 2px solid hsl(var(--background));
 }
 .enhanced-queries-item a{
     height: 100%;
@@ -193,7 +193,7 @@
     border-radius: 8px;
     padding: 16px;
     margin-bottom: 16px;
-    background-color: #f9f9f9;
+    background-color: hsl(var(--primary-foreground));
     transition: box-shadow 0.3s ease;
 }
 
@@ -209,27 +209,66 @@
 
 .article-header h3 {
     margin-top: 0;
-    color: #333;
+    color: hsl(var(--primary));
     font-size: 1.2em;
 }
 
 .article-item p {
     margin: 8px 0;
-    color: #555;
+    color: hsl(var(--primary));
     line-height: 1.5;
 }
 
-.article-link {
-    display: inline-block;
-    margin-top: 12px;
-    padding: 8px 12px;
-    background-color: #007bff;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
+.article-item p button{
+    font-size:14px;
+    font-weight: 500;
 }
 
-.article-link:hover {
-    background-color: #0056b3;
+.article-item p button:hover{
+    text-decoration:underline
+}
+
+.article-buttons{
+    display: flex;
+    gap: 16px;
+    justify-content: start;
+    align-items: center;
+}
+.article-added{
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    animation-duration: 1s;
+    animation-fill-mode: both;
+    -webkit-animation-duration: 1s;
+    -webkit-animation-fill-mode: both;
+    opacity: 0;
+    animation-name: fadeInUp;
+    -webkit-animation-name: fadeInUp;
+}
+
+.article-added p{
+    color: #75B033;
+}
+
+@keyframes fadeInUp {
+    from {
+        transform: translate3d(0,20px,0)
+    }
+
+    to {
+        transform: translate3d(0,0,0);
+        opacity: 1
+    }
+}
+
+@-webkit-keyframes fadeInUp {
+    from {
+        transform: translate3d(0,40px,0)
+    }
+
+    to {
+        transform: translate3d(0,0,0);
+        opacity: 1
+    }
 }
