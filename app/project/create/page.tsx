@@ -145,7 +145,12 @@ export default function CreateProject(){
             <div className='step-title'>¿Sobre qué quieres investigar hoy?</div>
             <Input 
               placeholder='e.g: quantum computing applications in cryptography' 
-              onChange = {(e) => setSubject(e.target.value)}/>
+              onChange = {(e) => setSubject(e.target.value)}/> 
+                     {isModalOpen && (
+        <div className='modal-overlay'>
+            <LoginForm></LoginForm>
+        </div>
+      )}
             <div>
                 <Button variant={'important'} onClick={() => handleSearch(2)}>Buscar</Button>
             </div>
