@@ -14,6 +14,29 @@ export default function LoginForm({onCreateProject}: LoginFormProps) {
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
 
+    const fetchLogin = async () => {
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/login`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({email: email, password: password})
+            });
+
+            if(!response.ok){
+                const errorData = await response.json();
+                console.error(errorData.detail);
+                return;
+            }
+
+            const token = await response.json();
+            document.cookie = `token = ${token.access_token}; path=/`;
+            onCreateProject();
+            
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     const fethPostRegister = async () => {
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/register`, {
@@ -22,17 +45,23 @@ export default function LoginForm({onCreateProject}: LoginFormProps) {
                 body: JSON.stringify({full_name: name,  email: email, password: password})
             });
 
+            if(response.status === 400) {
+                // If registration fails with 400, try to login
+                return await fetchLogin();
+            }
+
             if(!response.ok){
                 const errorData = await response.json();
-                console.error(errorData.detail)
+                console.error(errorData.detail);
+                return;
             }
 
             const token = await response.json();
-            console.log(token)
             document.cookie = `token = ${token.access_token}; path=/`;
-            onCreateProject()
+            onCreateProject();
+
         } catch (error) {
-            console.error(error)
+            console.error(error);
         }
     }
 

@@ -5,8 +5,10 @@ import LoginForm from '@/components/login-form'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { CircleCheck, SquareCheckBig } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import '../create/createProject.css'
+
 
 interface Article {
     title: string;
@@ -29,6 +31,7 @@ export default function CreateProject(){
     const [expandedAbstracts, setExpandedAbstracts] = useState<{ [key: number]: boolean }>({});
     const [selectedArticles, setSelectedArticles] = useState<Article[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const router = useRouter()
 
     const handleChangeStep = (step: number) =>{
         setCurrentStep(step)
@@ -122,8 +125,8 @@ export default function CreateProject(){
                 console.error('errorData.detail: ', errorData.detail)
             }
 
-            const id = await response.json();
-            console.log('id: ', id);
+            const responseJSON = await response.json();
+            router.push(`/project/${responseJSON.id}`)
             // window.open(`http://localhost:3000/project/${id}`)
 
         } catch (error) {
