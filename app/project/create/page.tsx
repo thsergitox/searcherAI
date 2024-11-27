@@ -29,7 +29,7 @@ export default function CreateProject(){
     const [articles, setArticles] = useState<Article[]>([]);
     const [expandedAbstracts, setExpandedAbstracts] = useState<{ [key: number]: boolean }>({});
     const [selectedArticles, setSelectedArticles] = useState<Article[]>([]);
-    const [isModalOpen, setIsModalOpen] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleChangeStep = (step: number) =>{
         setCurrentStep(step)
@@ -118,9 +118,9 @@ export default function CreateProject(){
                 body: JSON.stringify({access_token: getCookie('token'),  description: '', is_public: true, papers: selectedArticles, title:subject})
             })
 
-            if(response.ok){
+            if(!response.ok){
                 const errorData = await response.json();
-                console.error(errorData.detail)
+                console.error('errorData.detail: ', errorData.detail)
             }
 
             const id = await response.json();
@@ -128,7 +128,7 @@ export default function CreateProject(){
             // window.open(`http://localhost:3000/project/${id}`)
 
         } catch (error) {
-            console.error(error)
+            console.error('error: ', error)
         }
     }
 
@@ -237,7 +237,7 @@ export default function CreateProject(){
        </div>
        {isModalOpen && (
         <div className='modal-overlay'>
-            <LoginForm></LoginForm>
+            <LoginForm onCreateProject={CreateProject}></LoginForm>
         </div>
       )}
     </div>)
