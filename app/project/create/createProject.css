@@ -125,33 +125,33 @@
     mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) 10%, rgba(0, 0, 0, 1) 85%, rgba(0, 0, 0, 0));
     -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) 10%, rgba(0, 0, 0, 1) 85%, rgba(0, 0, 0, 0));
 }
-.enhanced-queries-list::-webkit-scrollbar {
+.enhanced-queries-list::-webkit-scrollbar, .article-list::-webkit-scrollbar {
     height: 5px;
     width: 5px;
   }
-.enhanced-queries-list::-webkit-scrollbar-track {
+.enhanced-queries-list::-webkit-scrollbar-track, .article-list::-webkit-scrollbar-track {
     border-radius: 20px;
     background-color: #E5E5E5;
 }
 
-.enhanced-queries-list::-webkit-scrollbar-track:hover {
+.enhanced-queries-list::-webkit-scrollbar-track:hover, .article-list::-webkit-scrollbar-track:hover {
     background-color: #D9D9D9;
 }
 
-.enhanced-queries-list::-webkit-scrollbar-track:active {
+.enhanced-queries-list::-webkit-scrollbar-track:active, .article-list::-webkit-scrollbar-track:active {
     background-color: #D3D3D3;
 }
 
-.enhanced-queries-list::-webkit-scrollbar-thumb {
+.enhanced-queries-list::-webkit-scrollbar-thumb, .article-list::-webkit-scrollbar-thumb {
     border-radius: 4px;
     background-color: #B5B5B5;
 }
 
-.enhanced-queries-list::-webkit-scrollbar-thumb:hover {
+.enhanced-queries-list::-webkit-scrollbar-thumb:hover, .article-list::-webkit-scrollbar-thumb:hover {
     background-color: #9A9A9B;
 }
 
-.enhanced-queries-list::-webkit-scrollbar-thumb:active {
+.enhanced-queries-list::-webkit-scrollbar-thumb:active, .article-list::-webkit-scrollbar-thumb:active {
     background-color: #8D8D8F;
 }
 .enhanced-queries-item{
@@ -186,6 +186,10 @@
     padding: 0;
     margin: 0;
     height: 100%;
+    overflow-y: scroll;
+    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) 10%, rgba(0, 0, 0, 1) 85%, rgba(0, 0, 0, 0));
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) 10%, rgba(0, 0, 0, 1) 85%, rgba(0, 0, 0, 0));
+
 }
 
 .article-item {
@@ -272,3 +276,21 @@
         opacity: 1
     }
 }
+
+.modal-overlay{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+.modal {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3)
+  }

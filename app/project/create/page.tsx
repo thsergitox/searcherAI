@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import '../create/createProject.css'
 import { CircleCheck, SquareCheckBig } from 'lucide-react'
+import LoginForm from '@/components/login-form'
 
 interface Article {
     title: string;
@@ -27,6 +28,7 @@ export default function CreateProject(){
     const [articles, setArticles] = useState<Article[]>([]);
     const [expandedAbstracts, setExpandedAbstracts] = useState<{ [key: number]: boolean }>({});
     const [selectedArticles, setSelectedArticles] = useState<Article[]>([]);
+    const [isModalOpen, setIsModalOpen] = useState(true);
 
     const handleChangeStep = (step: number) =>{
         setCurrentStep(step)
@@ -35,7 +37,7 @@ export default function CreateProject(){
     const handleSearch = async (nextStep: number) => {
         try {
             setCurrentStep(nextStep)
-            const response = await fetch('http://127.0.0.1:8000/api/v1/agent/run-refinement', {
+            const response = await fetch('https://back-searcherai-production.up.railway.app/api/v1/agent/run-refinement', {
                 method: 'POST',
                 headers: {'Content-Type' : 'application/json'},
                 body: JSON.stringify({topic: subject})
@@ -69,7 +71,7 @@ export default function CreateProject(){
     const handleLookForPapers = async () =>{
         try {
             setCurrentStep(3)
-            const response = await fetch('http://127.0.0.1:8000/api/v1/agent/run-search', {
+            const response = await fetch('https://back-searcherai-production.up.railway.app/api/v1/agent/run-search', {
                 method: 'POST',
                 headers: {'Content-Type' : 'application/json'},
                 body: JSON.stringify({max_results: 3, queries: selectedQueries, sort_by: "Relevance"})
@@ -107,6 +109,20 @@ export default function CreateProject(){
         console.log('selectedArticles: ', selectedArticles)
     }
 
+    const isUserLogged = () => {
+        return false
+    }
+
+    const sendSelectedArticles = () =>{
+        if (!isUserLogged()){
+            setIsModalOpen(true);
+        }
+    }
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+      };
+
     return(<div className='steps-container'>
        <div className='steps-count'>
         <div className="step"> 
@@ -129,7 +145,7 @@ export default function CreateProject(){
             <div className='step-title'>¿Sobre qué quieres investigar hoy?</div>
             <Input 
               placeholder='e.g: quantum computing applications in cryptography' 
-              onChange = {(e) => setSubject(e.target.value)}/> 
+              onChange = {(e) => setSubject(e.target.value)}/>
             <div>
                 <Button variant={'important'} onClick={() => handleSearch(2)}>Buscar</Button>
             </div>
@@ -152,7 +168,7 @@ export default function CreateProject(){
             {currentStep === 3 && 
             <>
                     <div className='step-title'>Artículos relacionados</div>
-                    {articles.length ? (
+                    {articles.length ? (<>
                         <ul className="article-list">
                             {articles.map((article, index) => (
                                 <li key={index} className="article-item">
@@ -183,10 +199,16 @@ export default function CreateProject(){
                                 </li>
                             ))}
                         </ul>
+                        <Button variant={'important'} onClick={() => sendSelectedArticles()}>Generar Survey Paper</Button></>
                     ) : (
                         <p >Cargando artículos...</p>
                     )}
             </>}
        </div>
+       {isModalOpen && (
+        <div className='modal-overlay'>
+            <LoginForm></LoginForm>
+        </div>
+      )}
     </div>)
 }
