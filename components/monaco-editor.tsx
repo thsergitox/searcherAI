@@ -25,19 +25,37 @@ export default function MonacoWithWebsocket({
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null)
   const [editorText, setEditorText] = useState(defaultValue)
 
-  const { isLoading, data } = useQuery({
+  const { isLoading, data, error } = useQuery({
     queryKey: ['retrieve-latex', editorText],
     queryFn: async () => {
-      const latexContent = editorText.replace(/\\/g, '\\\\');
-      const response = await fetch('http://localhost:8000/api/render-latex/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ latex: latexContent }),
-      });
-      const data = await response.blob();
-      return URL.createObjectURL(data);
+      const apiUrl = process.env.NEXT_PUBLIC_LATEX_API_URL || 'http://localhost:8000';
+      console.log('Sending LaTeX content:', editorText);
+      
+      try {
+        const response = await fetch(`${apiUrl}/api/v1/latex/render/`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ latex: editorText }),
+        });
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('Server response:', response.status, errorText);
+          throw new Error(`Failed to render LaTeX: ${errorText}`);
+        }
+        
+        const data = await response.blob();
+        if (data.size === 0) {
+          throw new Error('Received empty PDF from server');
+        }
+        return URL.createObjectURL(data);
+      } catch (err) {
+        console.error('Error in LaTeX rendering:', err);
+        throw err;
+      }
     },
-    enabled: !!editorText
+    enabled: !!editorText,
+    retry: false
   });
 
   // Editor value -> YJS Text value (A text value shared by multiple people)
@@ -367,7 +385,13 @@ export default function MonacoWithWebsocket({
         />
       </div>
       <div className="w-1/2 border-l p-4">
-        {isLoading ? <p>Loading...</p> : (
+        {isLoading ? (
+          <p>Rendering LaTeX...</p>
+        ) : error ? (
+          <div className="text-red-500">
+            <p>Error: {error instanceof Error ? error.message : 'Failed to render LaTeX'}</p>
+          </div>
+        ) : (
           <PDFViewer filePath={data} />
         )}
       </div>
