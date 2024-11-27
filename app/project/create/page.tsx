@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import '../create/createProject.css'
 import { CircleCheck, SquareCheckBig } from 'lucide-react'
+import LoginForm from '@/components/login-form'
+import { title } from 'process'
 
 interface Article {
     title: string;
@@ -27,6 +29,7 @@ export default function CreateProject(){
     const [articles, setArticles] = useState<Article[]>([]);
     const [expandedAbstracts, setExpandedAbstracts] = useState<{ [key: number]: boolean }>({});
     const [selectedArticles, setSelectedArticles] = useState<Article[]>([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleChangeStep = (step: number) =>{
         setCurrentStep(step)
@@ -35,7 +38,7 @@ export default function CreateProject(){
     const handleSearch = async (nextStep: number) => {
         try {
             setCurrentStep(nextStep)
-            const response = await fetch('http://127.0.0.1:8000/api/v1/agent/run-refinement', {
+            const response = await fetch('https://back-searcherai-production.up.railway.app/api/v1/agent/run-refinement', {
                 method: 'POST',
                 headers: {'Content-Type' : 'application/json'},
                 body: JSON.stringify({topic: subject})
@@ -69,7 +72,7 @@ export default function CreateProject(){
     const handleLookForPapers = async () =>{
         try {
             setCurrentStep(3)
-            const response = await fetch('http://127.0.0.1:8000/api/v1/agent/run-search', {
+            const response = await fetch('https://back-searcherai-production.up.railway.app/api/v1/agent/run-search', {
                 method: 'POST',
                 headers: {'Content-Type' : 'application/json'},
                 body: JSON.stringify({max_results: 3, queries: selectedQueries, sort_by: "Relevance"})
@@ -96,6 +99,39 @@ export default function CreateProject(){
         }));
     };
 
+    const getCookie = (name:string) => {
+        const cookies = document.cookie.split("; ");
+        for (const cookie of cookies) {
+          const [key, value] = cookie.split("=");
+          if (key === name) {
+            return decodeURIComponent(value);
+          }
+        }
+        return null;
+      };
+
+    const CreateProject = async () =>{
+        try {
+            const response = await fetch('https://multi-agent-api-production.up.railway.app/api/v1/projects',{
+                method: 'POST',
+                headers: {'Content-Type' : 'application/json'},
+                body: JSON.stringify({access_token: getCookie('token'),  description: '', is_public: true, papers: selectedArticles, title:subject})
+            })
+
+            if(!response.ok){
+                const errorData = await response.json();
+                console.error('errorData.detail: ', errorData.detail)
+            }
+
+            const id = await response.json();
+            console.log('id: ', id);
+            // window.open(`http://localhost:3000/project/${id}`)
+
+        } catch (error) {
+            console.error('error: ', error)
+        }
+    }
+
     const handleToggleAddSelectedArticle = (index:number) => {
         if(selectedArticles.indexOf(articles[index], 0) > -1){
             selectedArticles.splice(selectedArticles.indexOf(articles[index]), 1);
@@ -105,6 +141,16 @@ export default function CreateProject(){
             setSelectedArticles([...selectedArticles, articles[index]])
         }
         console.log('selectedArticles: ', selectedArticles)
+    }
+
+    const isUserLogged = () => {
+        return false
+    }
+
+    const sendSelectedArticles = () =>{
+        if (!isUserLogged()){
+            setIsModalOpen(true);
+        }
     }
 
     return(<div className='steps-container'>
@@ -152,7 +198,7 @@ export default function CreateProject(){
             {currentStep === 3 && 
             <>
                     <div className='step-title'>Artículos relacionados</div>
-                    {articles.length ? (
+                    {articles.length ? (<>
                         <ul className="article-list">
                             {articles.map((article, index) => (
                                 <li key={index} className="article-item">
@@ -183,10 +229,16 @@ export default function CreateProject(){
                                 </li>
                             ))}
                         </ul>
+                        <Button variant={'important'} onClick={() => sendSelectedArticles()}>Generar Survey Paper</Button></>
                     ) : (
                         <p >Cargando artículos...</p>
                     )}
             </>}
        </div>
+       {isModalOpen && (
+        <div className='modal-overlay'>
+            <LoginForm onCreateProject={CreateProject}></LoginForm>
+        </div>
+      )}
     </div>)
 }
