@@ -29,7 +29,7 @@ export default function MonacoWithWebsocket({
     queryKey: ['retrieve-latex', editorText],
     queryFn: async () => {
       const latexContent = editorText.replace(/\\/g, '\\\\');
-      const response = await fetch('http://localhost:8000/api/render-latex/', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/render-latex/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ latex: latexContent }),

@@ -41,7 +41,7 @@ export function ChatPanel() {
     setIsLoading(true)
 
     try {
-      const response = await fetch('http://localhost:8000/api/v1/ai/chatbot', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/ai/chatbot`, {
         method: 'POST',
         headers: {
           'accept': 'application/json',

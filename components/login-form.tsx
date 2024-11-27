@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Eye, EyeClosed } from "lucide-react";
+import { useState } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { useState } from "react";
 
 interface LoginFormProps{
     onCreateProject: ()=>void
@@ -16,7 +16,7 @@ export default function LoginForm({onCreateProject}: LoginFormProps) {
 
     const fethPostRegister = async () => {
         try {
-            const response = await fetch('https://multi-agent-api-production.up.railway.app/api/v1/auth/register', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/register`, {
                 method: 'POST',
                 headers: {'Content-Type' : 'application/json'},
                 body: JSON.stringify({full_name: name,  email: email, password: password})
