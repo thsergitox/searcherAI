@@ -28,31 +28,14 @@ export default function MonacoWithWebsocket({
   const { isLoading, data, error } = useQuery({
     queryKey: ['retrieve-latex', editorText],
     queryFn: async () => {
-      const apiUrl = process.env.NEXT_PUBLIC_LATEX_API_URL || 'http://localhost:8000';
-      console.log('Sending LaTeX content:', editorText);
-      
-      try {
-        const response = await fetch(`${apiUrl}/api/v1/latex/render/`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ latex: editorText }),
-        });
-        
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error('Server response:', response.status, errorText);
-          throw new Error(`Failed to render LaTeX: ${errorText}`);
-        }
-        
-        const data = await response.blob();
-        if (data.size === 0) {
-          throw new Error('Received empty PDF from server');
-        }
-        return URL.createObjectURL(data);
-      } catch (err) {
-        console.error('Error in LaTeX rendering:', err);
-        throw err;
-      }
+      const latexContent = editorText.replace(/\\/g, '\\\\');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/latex/render`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ latex: latexContent }),
+      });
+      const data = await response.blob();
+      return URL.createObjectURL(data);
     },
     enabled: !!editorText,
     retry: false

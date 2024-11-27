@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
-import { useState } from 'react'
+import LoginForm from '@/components/login-form'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import '../create/createProject.css'
 import { CircleCheck, SquareCheckBig } from 'lucide-react'
-import LoginForm from '@/components/login-form'
-import { title } from 'process'
+import { useState } from 'react'
+import '../create/createProject.css'
 
 interface Article {
     title: string;
@@ -38,7 +37,7 @@ export default function CreateProject(){
     const handleSearch = async (nextStep: number) => {
         try {
             setCurrentStep(nextStep)
-            const response = await fetch('https://back-searcherai-production.up.railway.app/api/v1/agent/run-refinement', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_AGENTS_URL}/api/v1/agent/run-refinement`, {
                 method: 'POST',
                 headers: {'Content-Type' : 'application/json'},
                 body: JSON.stringify({topic: subject})
@@ -72,7 +71,7 @@ export default function CreateProject(){
     const handleLookForPapers = async () =>{
         try {
             setCurrentStep(3)
-            const response = await fetch('https://back-searcherai-production.up.railway.app/api/v1/agent/run-search', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_AGENTS_URL}/api/v1/agent/run-search`, {
                 method: 'POST',
                 headers: {'Content-Type' : 'application/json'},
                 body: JSON.stringify({max_results: 3, queries: selectedQueries, sort_by: "Relevance"})
@@ -112,7 +111,7 @@ export default function CreateProject(){
 
     const CreateProject = async () =>{
         try {
-            const response = await fetch('https://multi-agent-api-production.up.railway.app/api/v1/projects',{
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/projects`,{
                 method: 'POST',
                 headers: {'Content-Type' : 'application/json'},
                 body: JSON.stringify({access_token: getCookie('token'),  description: '', is_public: true, papers: selectedArticles, title:subject})
