@@ -27,8 +27,12 @@ export default function DocumentPage({ params }: DocumentPageProps) {
         <QueryClientProvider client={queryClient}>
 
           <MonacoWithWebsocket documentId={params.id} />
-        </QueryClientProvider>
         </div>
+        <DraggablePanel>
+        <div className="w-80 border-l p-4">
+          {/* PDF Preview will go here */}
+        </div>
+        </DraggablePanel>
       </div>
     </div>
   )
