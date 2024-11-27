@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import '../create/createProject.css'
 import { CircleCheck, SquareCheckBig } from 'lucide-react'
 import LoginForm from '@/components/login-form'
+import { title } from 'process'
 
 interface Article {
     title: string;
@@ -98,6 +99,39 @@ export default function CreateProject(){
         }));
     };
 
+    const getCookie = (name:string) => {
+        const cookies = document.cookie.split("; ");
+        for (const cookie of cookies) {
+          const [key, value] = cookie.split("=");
+          if (key === name) {
+            return decodeURIComponent(value);
+          }
+        }
+        return null;
+      };
+
+    const CreateProject = async () =>{
+        try {
+            const response = await fetch('https://multi-agent-api-production.up.railway.app/api/v1/projects',{
+                method: 'POST',
+                headers: {'Content-Type' : 'application/json'},
+                body: JSON.stringify({access_token: getCookie('token'),  description: '', is_public: true, papers: selectedArticles, title:subject})
+            })
+
+            if(response.ok){
+                const errorData = await response.json();
+                console.error(errorData.detail)
+            }
+
+            const id = await response.json();
+            console.log('id: ', id);
+            // window.open(`http://localhost:3000/project/${id}`)
+
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
     const handleToggleAddSelectedArticle = (index:number) => {
         if(selectedArticles.indexOf(articles[index], 0) > -1){
             selectedArticles.splice(selectedArticles.indexOf(articles[index]), 1);
@@ -118,10 +152,6 @@ export default function CreateProject(){
             setIsModalOpen(true);
         }
     }
-
-    const closeModal = () => {
-        setIsModalOpen(false);
-      };
 
     return(<div className='steps-container'>
        <div className='steps-count'>
@@ -146,11 +176,6 @@ export default function CreateProject(){
             <Input 
               placeholder='e.g: quantum computing applications in cryptography' 
               onChange = {(e) => setSubject(e.target.value)}/> 
-                     {isModalOpen && (
-        <div className='modal-overlay'>
-            <LoginForm></LoginForm>
-        </div>
-      )}
             <div>
                 <Button variant={'important'} onClick={() => handleSearch(2)}>Buscar</Button>
             </div>
