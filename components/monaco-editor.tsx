@@ -25,7 +25,7 @@ export default function MonacoWithWebsocket({
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null)
   const [editorText, setEditorText] = useState(defaultValue)
 
-  const { isLoading, data } = useQuery({
+  const { isLoading, data, error } = useQuery({
     queryKey: ['retrieve-latex', editorText],
     queryFn: async () => {
       const latexContent = editorText.replace(/\\/g, '\\\\');
@@ -37,7 +37,8 @@ export default function MonacoWithWebsocket({
       const data = await response.blob();
       return URL.createObjectURL(data);
     },
-    enabled: !!editorText
+    enabled: !!editorText,
+    retry: false
   });
 
   // Editor value -> YJS Text value (A text value shared by multiple people)
@@ -367,7 +368,13 @@ export default function MonacoWithWebsocket({
         />
       </div>
       <div className="w-1/2 border-l p-4">
-        {isLoading ? <p>Loading...</p> : (
+        {isLoading ? (
+          <p>Rendering LaTeX...</p>
+        ) : error ? (
+          <div className="text-red-500">
+            <p>Error: {error instanceof Error ? error.message : 'Failed to render LaTeX'}</p>
+          </div>
+        ) : (
           <PDFViewer filePath={data} />
         )}
       </div>

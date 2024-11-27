@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 
 
-// You might need to specify the workerSrc to avoid issues in certain setups
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+// Initialize PDF.js worker
+if (typeof window !== 'undefined') {
+  pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
+}
 
 const PDFViewer = ({ filePath }: {filePath: string | undefined}) => {
   const [numPages, setNumPages] = useState(0);
@@ -11,29 +13,39 @@ const PDFViewer = ({ filePath }: {filePath: string | undefined}) => {
 
   function onDocumentLoadSuccess({ numPages } : {numPages: number}) {
     setNumPages(numPages);
-    setError(null); // Clear any previous errors
+    setError(null);
   }
 
   function onDocumentLoadError(error: Error) {
     console.error('Error loading PDF:', error);
-    setError('Error loading PDF');
+    setError(`Failed to load PDF: ${error.message}`);
   }
 
-  const starterPath = "../../public/starter.pdf";
+  if (!filePath) {
+    return <div className="flex items-center justify-center h-full">No PDF to display</div>;
+  }
   
   return (
     <div className="pdf-viewer">
-      {error && <p className="error-message">{error}</p>}
-      <Document
-        file={filePath || starterPath}
-        onLoadSuccess={onDocumentLoadSuccess}
-        onLoadError={onDocumentLoadError}
-        className={"flex-col w-8/12 h-[792px] overflow-auto justify-center items-center border-2 border-gray-300 rounded-md"}
-      >
-        {Array.from(new Array(numPages), (el, index) => (
-          <Page key={`page_${index + 1}`} pageNumber={index + 1} renderTextLayer={false}/>
-        ))}
-      </Document>
+      {error ? (
+        <div className="text-red-500 p-4">{error}</div>
+      ) : (
+        <Document
+          file={filePath}
+          onLoadSuccess={onDocumentLoadSuccess}
+          onLoadError={onDocumentLoadError}
+          className={"flex-col w-8/12 h-[792px] overflow-auto justify-center items-center border-2 border-gray-300 rounded-md"}
+        >
+          {Array.from(new Array(numPages), (el, index) => (
+            <Page 
+              key={`page_${index + 1}`} 
+              pageNumber={index + 1} 
+              renderTextLayer={false}
+              className="mb-4"
+            />
+          ))}
+        </Document>
+      )}
     </div>
   );
 };
