@@ -1,36 +1,30 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SearcherAI 
 
-## Getting Started
+This is the frontend for our platform that integrates an advanced AI-powered research paper search system, enabling users to find cutting-edge articles on any research topic. Once the papers are gathered, the system generates a detailed summary with complete references.
 
-First, run the development server:
+Additionally, it features a real-time collaborative LaTeX editor, allowing multiple users to work on the same document simultaneously with instant synchronization and efficient change tracking.
 
-```bash
+The goal is to streamline the research, summarization, and academic writing process, providing an all-in-one tool for researchers, academics, and students.
+
+### Requisites 
+
+NodeJS.
+
+### Commands
+
+```
+npm install
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Diagram
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+![](https://imgur.com/CP9AjqN.png)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+This project is part of a project for ABET of the Faculty of Sciences of the National University of Engineering in Peru.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+In case you are interested in the other parts of the project, these are the other repositories:
+-  [WebSocketProvider](https://github.com/thsergitox/wsprovider-for-searcherai).
+-  [App Client (this repository)](https://github.com/thsergitox/searcherAI)
+-  [Python Backend](https://github.com/thsergitox/multi-agent-api)
